@@ -26,9 +26,10 @@ testpaths = ["utests"]
 [dependency-groups]
 dev = [
     "pytest>=8.0",
+    "basedpyright>=1.0",
 ]
 
-[tool.pyright]
+[tool.basedpyright]
 include = ["src", "utests"]
 extraPaths = ["src"]
 venvPath = "."
@@ -36,3 +37,8 @@ venv = ".venv"
 pythonVersion = "3.13"
 reportMissingImports = true
 reportMissingTypeStubs = false
+reportExplicitAny = "none"
+reportAny = "none"
+reportImplicitStringConcatenation = "none"
+reportImplicitOverride = "none"
+reportUnusedCallResult = "none"

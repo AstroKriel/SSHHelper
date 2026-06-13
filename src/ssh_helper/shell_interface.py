@@ -9,6 +9,7 @@ import subprocess
 import sys
 from enum import Enum
 from dataclasses import dataclass
+from typing import final
 
 ## third-party
 from rich.console import Console
@@ -48,6 +49,7 @@ class _Theme:
     marker: _Markers
 
 
+@final
 class _Themes:
     STEP = _Theme(color=_Colors.WHITE, marker=_Markers.CIRCLE_OPEN)
     SUCCESS = _Theme(color=_Colors.GREEN, marker=_Markers.CIRCLE_CLOSED)
