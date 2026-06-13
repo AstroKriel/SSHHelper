@@ -175,7 +175,7 @@ class TestGenerateKey_Behaviour(unittest.TestCase):
             mock_run.return_value = MagicMock(returncode=0)
             with patch("pathlib.Path.chmod"):
                 key_generation.generate_key(config=config)
-            args = mock_run.call_args[0][0]
+            args: list[str] = mock_run.call_args[0][0]
             self.assertEqual(
                 args[0],
                 "ssh-keygen",
