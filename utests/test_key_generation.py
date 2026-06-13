@@ -8,6 +8,7 @@
 import tempfile
 import unittest
 from pathlib import Path
+from typing import cast
 from unittest.mock import MagicMock, patch
 
 ## local
@@ -175,7 +176,7 @@ class TestGenerateKey_Behaviour(unittest.TestCase):
             mock_run.return_value = MagicMock(returncode=0)
             with patch("pathlib.Path.chmod"):
                 key_generation.generate_key(config=config)
-            args: list[str] = mock_run.call_args[0][0]
+            args = cast(list[str], mock_run.call_args[0][0])
             self.assertEqual(
                 args[0],
                 "ssh-keygen",
