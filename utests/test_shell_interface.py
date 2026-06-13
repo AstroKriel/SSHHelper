@@ -1,4 +1,4 @@
-## { SCRIPT
+## { U-TEST
 
 ##
 ## === DEPENDENCIES
@@ -147,4 +147,4 @@ class TestRunCmd_Behaviour:
             assert "echo hello" in captured.err
 
 
-## } SCRIPT
+## } U-TEST

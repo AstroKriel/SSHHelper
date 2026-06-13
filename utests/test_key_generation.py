@@ -1,26 +1,24 @@
-## { SCRIPT
+## { U-TEST
 
 ##
 ## === DEPENDENCIES
 ##
 
 ## stdlib
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
-
-## third-party
-import pytest
 
 ## local
 from ssh_helper import key_generation
 
 ##
-## === SSHKeyConfig
+## === TEST SUITE
 ##
 
 
-class TestSSHKeyConfig_Paths:
+class TestSSHKeyConfig_Paths(unittest.TestCase):
 
     def test_private_key_path_uses_name(
         self,
@@ -30,7 +28,10 @@ class TestSSHKeyConfig_Paths:
             purpose="github access",
             device="desktop",
         )
-        assert config.private_file == Path.home() / ".ssh" / "id_ed25519_github"
+        self.assertEqual(
+            config.private_file,
+            Path.home() / ".ssh" / "id_ed25519_github",
+        )
 
     def test_public_key_path_is_private_with_pub_suffix(
         self,
@@ -40,7 +41,10 @@ class TestSSHKeyConfig_Paths:
             purpose="github access",
             device="desktop",
         )
-        assert config.public_file == config.private_file.with_suffix(".pub")
+        self.assertEqual(
+            config.public_file,
+            config.private_file.with_suffix(".pub"),
+        )
 
     def test_record_file_path_includes_name(
         self,
@@ -50,7 +54,10 @@ class TestSSHKeyConfig_Paths:
             purpose="github access",
             device="desktop",
         )
-        assert "github" in config.record_file.name
+        self.assertIn(
+            "github",
+            config.record_file.name,
+        )
 
     def test_comment_includes_purpose_and_device(
         self,
@@ -60,16 +67,17 @@ class TestSSHKeyConfig_Paths:
             purpose="github access",
             device="desktop",
         )
-        assert "github access" in config.comment
-        assert "desktop" in config.comment
+        self.assertIn(
+            "github access",
+            config.comment,
+        )
+        self.assertIn(
+            "desktop",
+            config.comment,
+        )
 
 
-##
-## === NAME VALIDATION
-##
-
-
-class TestEnsureNameIsValid_ValidNames:
+class TestEnsureNameIsValid_ValidNames(unittest.TestCase):
 
     def test_accepts_lowercase(
         self,
@@ -97,12 +105,12 @@ class TestEnsureNameIsValid_ValidNames:
         key_generation.ensure_name_is_valid(name="my_key")
 
 
-class TestEnsureNameIsValid_InvalidNames:
+class TestEnsureNameIsValid_InvalidNames(unittest.TestCase):
 
     def test_rejects_space(
         self,
     ) -> None:
-        with pytest.raises(
+        with self.assertRaises(
             SystemExit,
         ):
             key_generation.ensure_name_is_valid(name="my key")
@@ -110,7 +118,7 @@ class TestEnsureNameIsValid_InvalidNames:
     def test_rejects_dot(
         self,
     ) -> None:
-        with pytest.raises(
+        with self.assertRaises(
             SystemExit,
         ):
             key_generation.ensure_name_is_valid(name="my.key")
@@ -118,7 +126,7 @@ class TestEnsureNameIsValid_InvalidNames:
     def test_rejects_slash(
         self,
     ) -> None:
-        with pytest.raises(
+        with self.assertRaises(
             SystemExit,
         ):
             key_generation.ensure_name_is_valid(name="my/key")
@@ -126,44 +134,34 @@ class TestEnsureNameIsValid_InvalidNames:
     def test_rejects_at_symbol(
         self,
     ) -> None:
-        with pytest.raises(
+        with self.assertRaises(
             SystemExit,
         ):
             key_generation.ensure_name_is_valid(name="user@host")
 
 
-##
-## === KEY EXISTS GUARD
-##
-
-
-class TestEnsureKeyDoesNotExist_Behaviour:
+class TestEnsureKeyDoesNotExist_Behaviour(unittest.TestCase):
 
     def test_exits_if_private_key_exists(
         self,
-        tmp_path: Path,
     ) -> None:
-        private_file = tmp_path / "id_ed25519_github"
-        private_file.touch()
-        with pytest.raises(
-            SystemExit,
-        ):
-            key_generation.ensure_key_does_not_exist(private_file=private_file)
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            private_file = Path(tmp_dir) / "id_ed25519_github"
+            private_file.touch()
+            with self.assertRaises(
+                SystemExit,
+            ):
+                key_generation.ensure_key_does_not_exist(private_file=private_file)
 
     def test_passes_if_private_key_absent(
         self,
-        tmp_path: Path,
     ) -> None:
-        private_file = tmp_path / "id_ed25519_github"
-        key_generation.ensure_key_does_not_exist(private_file=private_file)
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            private_file = Path(tmp_dir) / "id_ed25519_github"
+            key_generation.ensure_key_does_not_exist(private_file=private_file)
 
 
-##
-## === KEY GENERATION
-##
-
-
-class TestGenerateKey_Behaviour:
+class TestGenerateKey_Behaviour(unittest.TestCase):
 
     def test_calls_ssh_keygen(
         self,
@@ -178,10 +176,22 @@ class TestGenerateKey_Behaviour:
             with patch("pathlib.Path.chmod"):
                 key_generation.generate_key(config=config)
             args = mock_run.call_args[0][0]
-            assert args[0] == "ssh-keygen"
-            assert "ed25519" in args
-            assert str(config.private_file) in args
-            assert config.comment in args
+            self.assertEqual(
+                args[0],
+                "ssh-keygen",
+            )
+            self.assertIn(
+                "ed25519",
+                args,
+            )
+            self.assertIn(
+                str(config.private_file),
+                args,
+            )
+            self.assertIn(
+                config.comment,
+                args,
+            )
 
     def test_sets_private_key_permissions(
         self,
@@ -199,4 +209,11 @@ class TestGenerateKey_Behaviour:
             )
 
 
-## } SCRIPT
+##
+## === ENTRY POINT
+##
+
+if __name__ == "__main__":
+    unittest.main()
+
+## } U-TEST
