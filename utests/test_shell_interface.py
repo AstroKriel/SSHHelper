@@ -22,7 +22,7 @@ class TestLogStep_Output:
 
     def test_writes_to_stderr(
         self,
-        capsys: pytest.CaptureFixture,
+        capsys: pytest.CaptureFixture[str],
     ) -> None:
         shell_interface.log_step("doing something")
         captured = capsys.readouterr()
@@ -31,7 +31,7 @@ class TestLogStep_Output:
 
     def test_includes_step_marker(
         self,
-        capsys: pytest.CaptureFixture,
+        capsys: pytest.CaptureFixture[str],
     ) -> None:
         shell_interface.log_step("doing something")
         captured = capsys.readouterr()
@@ -42,7 +42,7 @@ class TestLogOutcome_Output:
 
     def test_writes_to_stderr(
         self,
-        capsys: pytest.CaptureFixture,
+        capsys: pytest.CaptureFixture[str],
     ) -> None:
         shell_interface.log_outcome("it worked")
         captured = capsys.readouterr()
@@ -51,7 +51,7 @@ class TestLogOutcome_Output:
 
     def test_includes_outcome_marker(
         self,
-        capsys: pytest.CaptureFixture,
+        capsys: pytest.CaptureFixture[str],
     ) -> None:
         shell_interface.log_outcome("it worked")
         captured = capsys.readouterr()
@@ -62,7 +62,7 @@ class TestBindVar_Output:
 
     def test_writes_to_stderr(
         self,
-        capsys: pytest.CaptureFixture,
+        capsys: pytest.CaptureFixture[str],
     ) -> None:
         shell_interface.bind_var("key_name", "github")
         captured = capsys.readouterr()
@@ -72,7 +72,7 @@ class TestBindVar_Output:
 
     def test_includes_arrow_marker(
         self,
-        capsys: pytest.CaptureFixture,
+        capsys: pytest.CaptureFixture[str],
     ) -> None:
         shell_interface.bind_var("key_name", "github")
         captured = capsys.readouterr()
@@ -83,7 +83,7 @@ class TestLogResult_Output:
 
     def test_writes_to_stdout(
         self,
-        capsys: pytest.CaptureFixture,
+        capsys: pytest.CaptureFixture[str],
     ) -> None:
         shell_interface.log_result("all done")
         captured = capsys.readouterr()
@@ -92,7 +92,7 @@ class TestLogResult_Output:
 
     def test_includes_outcome_marker(
         self,
-        capsys: pytest.CaptureFixture,
+        capsys: pytest.CaptureFixture[str],
     ) -> None:
         shell_interface.log_result("all done")
         captured = capsys.readouterr()
@@ -117,7 +117,7 @@ class TestKill_Behaviour:
 
     def test_writes_error_to_stderr(
         self,
-        capsys: pytest.CaptureFixture,
+        capsys: pytest.CaptureFixture[str],
     ) -> None:
         with pytest.raises(SystemExit):
             shell_interface.kill("something went wrong")
@@ -138,7 +138,7 @@ class TestRunCmd_Behaviour:
 
     def test_logs_command_to_stderr(
         self,
-        capsys: pytest.CaptureFixture,
+        capsys: pytest.CaptureFixture[str],
     ) -> None:
         with patch("subprocess.run") as mock_run:
             mock_run.return_value = MagicMock(returncode=0)
