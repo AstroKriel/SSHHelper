@@ -134,16 +134,16 @@ def print_next_steps(
     shell_interface.log_step(f"1. Add the following block to ~/.ssh/config (replace the placeholders):")
     print(
         f"\n"
-        f"  Host <ALIAS>\n"
-        f"      HostName <REMOTE_HOST>\n"
-        f"      User <REMOTE_USER>\n"
-        f"      IdentityFile {config.private_file}\n"
-        f"      IdentitiesOnly yes\n"
+        f"\tHost <ALIAS>\n"
+        f"\t\tHostName <REMOTE_HOST>\n"
+        f"\t\tUser <REMOTE_USER>\n"
+        f"\t\tIdentityFile {config.private_file}\n"
+        f"\t\tIdentitiesOnly yes\n"
     )
     shell_interface.log_step("2. Deploy the key to the remote host:")
-    print(f"\n  ssh-copy-id -i {config.public_file} <REMOTE_USER>@<REMOTE_HOST>\n")
+    print(f"\n\tssh-copy-id -i {config.public_file} <REMOTE_USER>@<REMOTE_HOST>\n")
     shell_interface.log_step("3. Test the connection:")
-    print(f"\n  ssh <ALIAS>\n")
+    print(f"\n\tssh <ALIAS>\n")
     shell_interface.log_outcome(f"Full record saved to {config.record_file}")
 
 
